@@ -1,0 +1,44 @@
+{% extends 'blog/base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-8">
+        {% for blog in blogs %}
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ blog.title }}</h5>
+                <div class="d-flex justify-content-start align-items-center text-muted">
+                    <h6 class="m-0">- {{ blog.author.full_name }}</h6>
+                    <span class="ms-2">{{ blog.created_on }}</span>
+                </div>
+                <p class="card-text">{{ blog.body | truncatechars:200 }}</p>
+                <a href="{% url 'detail' blog.pk %}" class="btn btn-primary">Read More</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-4">
+        <div class="card mb-3">
+            <h5 class="card-header">Featured</h5>
+            <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <h5 class="card-header">Featured</h5>
+            <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
