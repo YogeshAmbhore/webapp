@@ -3,48 +3,51 @@
 {% block title %} {{ post.title }} {% endblock %}
 
 {% block content %}
-
-{% if blog %}
-<h2 style="text-align: center;">{{ blog.title }}</h2>
-<div class="d-flex justify-content-center text-muted">
-    <div class="d-flex align-items-center">
-        <h6 class="m-0">{{ blog.author.full_name }}</h6>
-        <span class="ms-2">{{ blog.created_on }}</span>
+<div class="container mt-4">
+    {% if blog %}
+    <h2 style="text-align: center;">{{ blog.title }}</h2>
+    <div class="d-flex justify-content-center text-muted">
+        <div class="d-flex align-items-center">
+            <h6 class="m-0">{{ blog.author.full_name }}</h6>
+            <span class="ms-2">{{ blog.created_on }}</span>
+        </div>
     </div>
-</div>
-<hr>
-<p style="text-align: justify;">{{ blog.body }}</p>
-{% endif %}
-<hr>
-<div class="mb-3">
-    <h5>Add a comment</h5>
-    <textarea class="form-control mb-2" id="exampleFormControlTextarea1" rows="3" placeholder="Add your comment here"></textarea>
-    <a href="{% url 'home' %}" class="btn btn-primary">Comment</a>
-</div>
-{% if comments %}
-<div class="mt-4">
-    <h5>Comments ({{ comments|length }})</h5>
     <hr>
-    <div class="comments">
-        {% for comment in comments %}
-        <div class="comment mb-3">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <small class="text-muted">{{ comment.author }} - {{ comment.created_at }}</small>
-                    <p>{{ comment.content }}</p>
-                </div>
-                <div>
-                    <a href="#" class="btn btn-sm btn-secondary">Reply</a>
+    {% if blog.header_image %}
+    <div class="text-center"> <!-- Center-align the image -->
+        <img src="{{ blog.header_image.url }}" alt="{{ blog.header_image.caption }}" class="img-fluid">
+    </div>
+    <br>
+    {% endif %}
+    <p class="text-justify">{{ blog.body | safe }}</p>
+
+    <div class="mb-3">
+        <h5>Add a comment</h5>
+        <textarea class="form-control mb-2" id="exampleFormControlTextarea1" rows="3"
+            placeholder="Add your comment here"></textarea>
+        <a href="{% url 'home' %}" class="btn btn-primary">Comment</a>
+    </div>
+    {% if comments %}
+    <div class="mt-4">
+        <h5>Comments ({{ comments|length }})</h5>
+        <hr>
+        <div class="comments">
+            {% for comment in comments %}
+            <div class="comment mb-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted">{{ comment.author }} - {{ comment.created_at }}</small>
+                        <p>{{ comment.content }}</p>
+                    </div>
+                    <div>
+                        <a href="#" class="btn btn-sm btn-secondary">Reply</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
+    {% endif %}
+    {% endif %}
 </div>
-{% endif %}
-<!-- 
-
-<a href="{% url 'home' %}" class="btn btn-primary">Back</a> -->
-
 {% endblock %}
-

@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 import os
+from ckeditor.fields import RichTextField
 
 # Create your models here.
-
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, error_messages={
             'unique': _("A user with that email address already exists."),
@@ -53,29 +53,34 @@ STATUS_CHOICES = [
         ('published', 'Published'),
     ]
 
+def image_upload_path(instance, filename):
+    folder_name = instance.title
+    return os.path.join('blog_images', folder_name, filename)
+
 class Post(models.Model):
     title = models.CharField(max_length=200, blank=False, null=False)
-    body = models.TextField()
+    body = RichTextField(null=True, blank=True)
+    snippet = models.CharField(max_length=255)
+    header_image = models.ImageField(blank=True, null=True, upload_to=image_upload_path)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     tags= models.ManyToManyField(Tag, blank=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='draft')
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
 
+    class Meta:
+        ordering = ['-updated_on']
+
     def __str__(self) -> str:
         return self.title
 
-def image_upload_path(instance, filename):
-    folder_name = instance.post.title
-    return os.path.join('blog_images', folder_name, filename)
+# class Image(models.Model):
+#     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
+#     image = models.ImageField(blank=True, null=True, upload_to=image_upload_path)
+#     caption = models.CharField(max_length=200, blank=True)
 
-class Image(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to=image_upload_path)
-    caption = models.CharField(max_length=200, blank=True)
-
-    def __str__(self) -> str:
-        return self.post.title
+#     def __str__(self) -> str:
+#         return self.post.title
     
 class Comment(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

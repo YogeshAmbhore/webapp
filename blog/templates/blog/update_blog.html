@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+
+{% block title %} Update Blog {% endblock %}
+
+{% block content %}
+<div class="container mt-6">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="card-title text-center">Update Blog Post</h2>
+                </div>
+                <div class="card-body input-group">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {{ form.as_p }}
+                        <div class="row text-center"> <!-- Center-align the button -->
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Update Blog Post</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

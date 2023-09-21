@@ -11,14 +11,48 @@
             <div class="card-body">
                 <h5 class="card-title">{{ blog.title }}</h5>
                 <div class="d-flex justify-content-start align-items-center text-muted">
-                    <h6 class="m-0">- {{ blog.author.full_name }}</h6>
+                    <h6 class="m-0">{{ blog.author.full_name }}</h6>
                     <span class="ms-2">{{ blog.created_on }}</span>
                 </div>
-                <p class="card-text">{{ blog.body | truncatechars:200 }}</p>
+                <!-- <p class="card-text">{{ blog.snippets | truncatechars:200 | safe }}</p> -->
+                <p class="card-text">{{ blog.snippet | slice:200 | safe }}</p>
                 <a href="{% url 'detail' blog.pk %}" class="btn btn-primary">Read More</a>
+                {% if request.user == blog.author %}
+                <a href="{% url 'update-post' blog.pk %}" class="btn btn-success">Edit</a>
+                <a href="{% url 'delete-post' blog.pk %}" class="btn btn-danger">Delete</a>
+                {% endif %}
+                
             </div>
         </div>
         {% endfor %}
+        <!-- {{ blogs }}
+        <br>
+        Has Previous : {{ blogs.has_previous }}
+        <br>
+        Has Next : {{ blogs.has_next }}
+        <br>
+        Current Page : {{ blogs.number }}
+        <br>
+        Number of Pages : {{ blogs.paginator.num_pages }} -->
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if blogs.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ blogs.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+
+                <li class="page-item"><a href="#" class="page-link disabled">Page {{ blogs.number }} of {{ blogs.paginator.num_pages }}</a></li>
+
+                {% if blogs.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ blogs.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ blogs.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
     </div>
     <div class="col-4">
         <div class="card mb-3">
