@@ -1,6 +1,5 @@
 from django import forms
-from django.forms import ModelForm
-from .views import Post
+from .views import Post, Comment
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from .models import Post, CustomUser  # Assuming your Post model is imported
@@ -40,6 +39,17 @@ class CustomUserCreationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields['password1'].widget = forms.PasswordInput(attrs={'class': 'form-control'})
         self.fields['password2'].widget = forms.PasswordInput(attrs={'class': 'form-control'})
+    
+
+class CommentFrom(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Add your comment here'}),
+        }
+        
 
 
 

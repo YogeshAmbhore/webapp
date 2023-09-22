@@ -1,10 +1,11 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from .models import Post, Profile, CustomUser, Comment, Tag
-from .forms import PostCreationForm, CustomUserCreationForm
+from .forms import PostCreationForm, CustomUserCreationForm, CommentFrom
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 
 User = get_user_model()
@@ -24,15 +25,29 @@ def home(request):
 
 
 def blog_detail(request, pk):
-    if request.method == 'GET':
-        try:
-            blog = Post.objects.get(id=pk)
-            comments = Comment.objects.filter(post=blog)
-            context = {"blog": blog, "comments": comments}
-            return render(request, 'blog/detail.html', context=context)
+    try:
+        form = CommentFrom()
+        blog = Post.objects.get(id=pk)
+        comments = Comment.objects.filter(post=blog)
+    
+    except Post.DoesNotExist:
+        return render(request, 'blog/404.html', status=404)
+    
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            form = CommentFrom(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.post = blog
+                comment.author = request.user
+                comment.save()
+                return redirect(f'/blog_detail/{pk}')
+        else:
+            return redirect('user-login')
         
-        except Post.DoesNotExist:
-            return render(request, 'blog/404.html', status=404)
+    context = {"form": form, "blog": blog, "comments": comments}
+    
+    return render(request, 'blog/detail.html', context=context)
 
 
 @login_required(login_url='user-login')

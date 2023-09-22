@@ -23,10 +23,20 @@
 
     <div class="mb-3">
         <h5>Add a comment</h5>
-        <textarea class="form-control mb-2" id="exampleFormControlTextarea1" rows="3"
-            placeholder="Add your comment here"></textarea>
-        <a href="{% url 'home' %}" class="btn btn-primary">Comment</a>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-2">
+                {{ form.content }}
+            </div>
+            <div class="row"> <!-- Center-align the button -->
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Comment</button>
+                </div>
+            </div>
+        </form>
     </div>
+
+
     {% if comments %}
     <div class="mt-4">
         <h5>Comments ({{ comments|length }})</h5>
@@ -38,6 +48,10 @@
                     <div>
                         <small class="text-muted">{{ comment.author }} - {{ comment.created_at }}</small>
                         <p>{{ comment.content }}</p>
+                        {% if request.user == comment.author %}
+                        <a href="#" class="text-decoration-none">Edit</a>
+                        <a href="#" class="text-decoration-none">Delete</a>
+                        {% endif %}
                     </div>
                     <div>
                         <a href="#" class="btn btn-sm btn-secondary">Reply</a>
