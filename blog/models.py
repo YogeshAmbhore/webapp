@@ -73,14 +73,6 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.title
-
-# class Image(models.Model):
-#     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
-#     image = models.ImageField(blank=True, null=True, upload_to=image_upload_path)
-#     caption = models.CharField(max_length=200, blank=True)
-
-#     def __str__(self) -> str:
-#         return self.post.title
     
 class Comment(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -92,3 +84,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author.username} on {self.post.title}"
+
+# class Image(models.Model):
+#     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
+#     image = models.ImageField(blank=True, null=True, upload_to=image_upload_path)
+#     caption = models.CharField(max_length=200, blank=True)
+
+#     def __str__(self) -> str:
+#         return self.post.title

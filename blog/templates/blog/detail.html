@@ -8,7 +8,7 @@
     <h2 style="text-align: center;">{{ blog.title }}</h2>
     <div class="d-flex justify-content-center text-muted">
         <div class="d-flex align-items-center">
-            <h6 class="m-0">{{ blog.author.full_name }}</h6>
+            <a href="{% url 'demo' request.user.id %}" class="text-decoration-none"><h6 class="m-0">{{ blog.author.full_name }}</h6></a>
             <span class="ms-2">{{ blog.created_on }}</span>
         </div>
     </div>
@@ -46,11 +46,11 @@
             <div class="comment mb-3">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <small class="text-muted">{{ comment.author }} - {{ comment.created_at }}</small>
+                        <small class="text-muted">{{ comment.author.full_name }} - {{ comment.created_at }}</small>
                         <p>{{ comment.content }}</p>
                         {% if request.user == comment.author %}
-                        <a href="#" class="text-decoration-none">Edit</a>
-                        <a href="#" class="text-decoration-none">Delete</a>
+                        <a href="{% url 'update-comment' comment.id %}" class="text-decoration-none">Edit</a>
+                        <a href="{% url 'delete-comment' comment.id %}" class="text-decoration-none">Delete</a>
                         {% endif %}
                     </div>
                     <div>

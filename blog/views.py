@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404, reverse
 from .models import Post, Profile, CustomUser, Comment, Tag
 from .forms import PostCreationForm, CustomUserCreationForm, CommentFrom
 from django.core.paginator import Paginator
@@ -41,7 +41,8 @@ def blog_detail(request, pk):
                 comment.post = blog
                 comment.author = request.user
                 comment.save()
-                return redirect(f'/blog_detail/{pk}')
+                return_url = reverse('detail', args=[pk])
+                return redirect(return_url)
         else:
             return redirect('user-login')
         
@@ -137,6 +138,47 @@ def user_logout(request):
     logout(request)
     messages.error(request, 'User was logged out')
     return redirect('home')
+
+def update_comment(request, pk):
+    try:
+        comment = Comment.objects.get(id=pk, author=request.user)
+        form = CommentFrom(instance=comment)
+        post_id = comment.post.id
+
+        if request.method == 'POST':
+            form = CommentFrom(request.POST, instance=comment)
+            if form.is_valid():
+                form.save()
+                return_url = reverse('detail', args=[post_id])
+                return redirect(return_url)
+        
+            context = {"form": form}
+            return render(request, 'blog/detail.html', context=context)
+        
+        return_url = reverse('detail', args=[post_id])
+        return redirect(return_url)
+    
+    except Comment.DoesNotExist:
+        return render(request, 'blog/404.html', status=404)
+
+
+@login_required(login_url='user-login')   
+def delete_comment(request, pk):
+    try:
+        obj = Comment.objects.get(id=pk, author=request.user)
+    except Comment.DoesNotExist:
+        return HttpResponse("Comment not found or you are not the author.")
+    
+    post_id = obj.post.id
+    obj.delete()
+    return_url = reverse('detail', args=[post_id])
+    return redirect(return_url)
+
+
+def demo(request, pk):
+    profile = Profile.objects.get(id=pk)
+    context = {"profile": profile}
+    return render(request, 'blog/profile.html', context=context)
 
 #Custom User Login Function
 """
